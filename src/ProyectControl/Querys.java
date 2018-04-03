@@ -204,7 +204,7 @@ public class Querys {
             while (rs.next()) {
                 IdProyect = rs.getInt("IdProyect");
             }
-            String query = "  insert into proyectos(IdProyect, IdUsers, nombreProyecto, jefe, fechaInicio, fechaFin, descripcion) values (?,?,?,?,?,?,?) where IdProyect= '' ";
+            String query = "  update proyectos(IdProyect, IdUsers, nombreProyecto, jefe, fechaInicio, fechaFin, descripcion) values (?,?,?,?,?,?,?) where IdProyect= '' ";
             PreparedStatement preStmt = conn.prepareStatement(query);
 
             preStmt.setInt(1, IdUsers);
@@ -224,7 +224,8 @@ public class Querys {
             disconnectDB();
 
         }
-    }   //Borra Proyectos a Base de Datos.
+    }  
+    //Borra Proyectos a Base de Datos.
 
     public void DeleteProyect() {
         conn = connectDB();
@@ -251,6 +252,96 @@ public class Querys {
             disconnectDB();
 
         }
+        
+        
+    }
+      //Consulta Tareas a Base de Datos
+
+    public String getInfoTask() {
+        conn = connectDB();
+        String query = " select * from tareas";
+        PreparedStatement consulta = null;
+        ResultSet resultadotabla = null;
+        String w = "";
+        StringBuilder tabla = new StringBuilder(w);
+        PreparedStatement preStmt = null;
+        try {
+            consulta = conn.prepareStatement(query);
+            resultadotabla = consulta.executeQuery();
+            tabla.append("Tarea Id|\tProyecto Id|\tNombre Tarea|\tActividad Tarea|\tEncargado|\tFecha Inicio|\tFecha Fin|\tEstado|\n");
+            while (resultadotabla.next()) {
+                tabla.append(resultadotabla.getInt(1)).append("\t");
+                tabla.append(resultadotabla.getInt(2)).append("\t");
+                tabla.append(resultadotabla.getString(3)).append("\t");
+                tabla.append(resultadotabla.getString(4)).append("\t");
+                tabla.append(resultadotabla.getString(5)).append("\t");
+                tabla.append(resultadotabla.getString(6)).append("\t");
+                tabla.append(resultadotabla.getString(7)).append("\t");
+                tabla.append(resultadotabla.getString(8)).append("\t \n");
+            }
+            return tabla.toString();
+        } catch (SQLException ex) {
+            Logger.getLogger(Querys.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try {
+                if (preStmt != null) {
+                    preStmt.close();
+                }
+                if (conn != null) {
+                    disconnectDB(conn);
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return tabla.toString();
     }
 
+    String getInfoTask(String tareas) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+
+ //Consulta Documentos Compartidos a Base de Datos
+
+    public String getDocumentShare() {
+        conn = connectDB();
+        String query = " select * from docCompartidos";
+        PreparedStatement consulta = null;
+        ResultSet resultadotabla = null;
+        String w = "";
+        StringBuilder tabla = new StringBuilder(w);
+        PreparedStatement preStmt = null;
+        try {
+            consulta = conn.prepareStatement(query);
+            resultadotabla = consulta.executeQuery();
+            tabla.append("Id Documento|\tId Usuario|\tCorreo|\tProyecto|\n");
+            while (resultadotabla.next()) {
+                tabla.append(resultadotabla.getInt(1)).append("\t");
+                tabla.append(resultadotabla.getInt(2)).append("\t");
+                tabla.append(resultadotabla.getString(3)).append("\t");
+                tabla.append(resultadotabla.getString(4)).append("\t \n");
+            }
+            return tabla.toString();
+        } catch (SQLException ex) {
+            Logger.getLogger(Querys.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try {
+                if (preStmt != null) {
+                    preStmt.close();
+                }
+                if (conn != null) {
+                    disconnectDB(conn);
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return tabla.toString();
+    }
+
+    String getDocumentShare(String docCompartidos) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 }
+
