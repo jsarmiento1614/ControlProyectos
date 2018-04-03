@@ -13,7 +13,8 @@ import java.util.Scanner;
  * @author jsarmiento
  */
 public class Display {
-            //Instancio Scanner dentro de la funcion Display principal para uso general.
+    //Instancio Scanner dentro de la funcion Display principal para uso general.
+
     Scanner teclado = new Scanner(System.in);
     private String name;
     private String usuario;
@@ -22,8 +23,12 @@ public class Display {
     private String nPassword;
     private String pSeguridad;
     private String rSeguridad;
-    private String Proveedor;
-
+    //more variables
+    private String nameProyect;
+    private String jefeProyect;
+    private String fInicio;
+    private String fFin;
+    private String descripcion;
 
     /**
      * **** Instancio de manera general las clases usadas.*****
@@ -31,19 +36,17 @@ public class Display {
     HeaderMain callHeaderMain = new HeaderMain();
     //Display callDisplayMetodscallHeaderMain = new Display();
     ValidarEmail callValidator = new ValidarEmail();
-       //Funcion de Inicio de Sesion de Usuarios.   
-    
+    //Funcion de Inicio de Sesion de Usuarios.   
+
     //**************FIN INSTANCIA*****************//
-
-
     public void Login() {
-        Querys callQuerys =new Querys();//Instanciar Consultas
+        Querys callQuerys = new Querys();//Instanciar Consultas
         Display callDisplayMetods = new Display();
         int exit = 0;
         do {
             callHeaderMain.headerIniciarSesion();//llamo el menu de inicio de sesion.
             System.out.print("Ingrese Correo Electrónico:");
-            JSystem.out.printColorln(JSystem.Color.cyan," \t\t\t\t      (R) for Sign up - (S) for Exit");
+            JSystem.out.printColorln(JSystem.Color.cyan, " \t\t\t\t      (R) for Sign up - (S) for Exit");
             System.out.print(" ");
             email = teclado.nextLine();
             if ("R".equalsIgnoreCase(email)) {
@@ -66,7 +69,6 @@ public class Display {
             //Aqui programacion para insertar el correo a la consulata de la bd.
             callQuerys.queryEmail(email, password);
         } while (exit != 1);
-        callDisplayMetods.Perfil(usuario, email);
     }
 
     //Funcion Registro de Usuarios.
@@ -85,34 +87,34 @@ public class Display {
     }
 
     public void dateregistroUser() {
-        Querys callQuerys =new Querys();//Instanciar Consultas
+        Querys callQuerys = new Querys();//Instanciar Consultas
         Display callDisplayMetods = new Display();
         System.out.print("Ingrese su Nombre:");
-        JSystem.out.printColorln(JSystem.Color.cyan,"\t\t\t\t\t\t              (C) for Cancel");    
+        JSystem.out.printColorln(JSystem.Color.cyan, "\t\t\t\t\t\t              (C) for Cancel");
         System.out.print(" ");
         name = teclado.nextLine();
-        callDisplayMetods.cancelar(name, null, null, null,null,null);
+        callDisplayMetods.cancelar(name, null, null, null, null, null);
         System.out.println();//space line.
-        System.out.println("Ingresa su Usuario:");    
+        System.out.println("Ingresa su Usuario:");
         System.out.print(" ");
         usuario = teclado.nextLine();
         System.out.println();//space line.
-        callDisplayMetods.cancelar(null, usuario, null, null,null,null);
+        callDisplayMetods.cancelar(null, usuario, null, null, null, null);
         System.out.println("Ingrese su Correo:");
         System.out.print(" ");
         email = teclado.nextLine();
         System.out.println();//space line.
-        callDisplayMetods.cancelar(null, null, email, null,null,null);
+        callDisplayMetods.cancelar(null, null, email, null, null, null);
         callValidator.validar(email, "R");//mando el correo al validador para la verificacion.
         System.out.println("Ingrese su Contraseña:");
         System.out.print(" ");
         password = teclado.nextLine();
-        callDisplayMetods.cancelar(null, null, null, password,null,null);
+        callDisplayMetods.cancelar(null, null, null, password, null, null);
         System.out.println();//space line.
         System.out.println("Seleccione una pregunta de seguridad:");
         System.out.println("1) ¿Cuál es el nombre de tu primer mascota?");
-        System.out.println("2) ¿Cuál es el nombre de tu abuelo?");
-        System.out.println("3) ¿Últimos dígitos de tu número de teléfono?");
+        System.out.println("2) ¿Cuál es el nombre de tu pelicula favorita?");
+        System.out.println("3) ¿Últimos dígitos de tu número de identidad?");
         System.out.print(" ");
         int opt = teclado.nextInt();
         switch (opt) {
@@ -120,40 +122,32 @@ public class Display {
                 pSeguridad = "¿Cuál es el nombre de tu primer mascota?";
                 break;
             case 2:
-                pSeguridad = "¿Cuál es el nombre de tu abuelo?";
+                pSeguridad = "¿Cuál es el nombre de tu pelicula favorita?";
                 break;
             case 3:
-                pSeguridad = "¿últimos dígitos de tu número de teléfono?";
+                pSeguridad = "¿Últimos dígitos de tu número de identidad?";
                 break;
             default:
                 break;
         }
         teclado.nextLine();
-        callDisplayMetods.cancelar(null, null, null, null,pSeguridad,null);
+        callDisplayMetods.cancelar(null, null, null, null, pSeguridad, null);
         System.out.println();//space line.
         System.out.println("Ingrese la respuesta secreta:");
         System.out.print(" ");
         rSeguridad = teclado.nextLine();
-        callDisplayMetods.cancelar(null, null, null, null,null,rSeguridad);
+        callDisplayMetods.cancelar(null, null, null, null, null, rSeguridad);
         //Aqui el codigo de la programacion de la consulta.
-        callQuerys.InsertRegistro(name, usuario, email, password,pSeguridad,rSeguridad);
+        callQuerys.InsertRegistro(name, usuario, email, password, pSeguridad, rSeguridad);
         //letter code.
         JSystem.out.printColorln(JSystem.ColorBg.green, JSystem.Color.white, "                                                                                            ");
         JSystem.out.printColorln(JSystem.ColorBg.green, JSystem.Color.white, "                                       REGISTRO EXITOSO                                     ");
-        JSystem.out.printColorln(JSystem.ColorBg.green, JSystem.Color.white, "                              Ya puedes iniciar sesión con tu cuenta.                       "); 
+        JSystem.out.printColorln(JSystem.ColorBg.green, JSystem.Color.white, "                              Ya puedes iniciar sesión con tu cuenta.                       ");
         JSystem.out.printColorln(JSystem.ColorBg.green, JSystem.Color.white, "                                                                                            ");
         callDisplayMetods.Login();
     }
 
-    public void cancelar(String name,String usuario, String email, String password, String pSeguridad, String rSeguridad) {
-        Display callDisplayMetods = new Display();
-        if ("C".equalsIgnoreCase(name) || "C".equalsIgnoreCase(usuario) || "C".equalsIgnoreCase(email) || "C".equalsIgnoreCase(password) || "C".equalsIgnoreCase(pSeguridad)|| "C".equalsIgnoreCase(rSeguridad)) {
-            JSystem.out.printColorln(JSystem.Color.blue, "____________________________________________________________________________________________");
-            JSystem.out.printColorln(JSystem.ColorBg.red, JSystem.Color.white, "\n-----------------------------------SUSCRIPCIÓN CANCELADA------------------------------------");
-            JSystem.out.printColorln(JSystem.Color.blue, "____________________________________________________________________________________________");
-            callDisplayMetods.Login();
-        }
-    }
+  
 
     public void QuestionVerificationEmail() {
         Display callDisplayMetods = new Display();
@@ -286,122 +280,203 @@ public class Display {
         }
     }
 
-    public void Perfil(String nombreUsuario, String email) {
+    public void Perfil(String nombreUsuario, String email, int IdUser) {
         Display callDisplayMetods = new Display();
-        int salir = 0;
+
         JSystem.out.printColorln(JSystem.ColorBg.yellow, JSystem.Color.white, "\n\n\n");
         JSystem.out.printColorln(JSystem.ColorBg.yellow, JSystem.Color.white, "                                                                                            ");
         JSystem.out.printColorln(JSystem.ColorBg.yellow, JSystem.Color.black, "                          BIENVENIDO A SU CUENTA CONTROL DE PROYECTOS                       ");
-        JSystem.out.printColorln(JSystem.ColorBg.yellow, JSystem.Color.black, "                 "+nombreUsuario+"                                     "+email+"            ");
+        JSystem.out.printColorln(JSystem.ColorBg.yellow, JSystem.Color.black, "                 " + nombreUsuario + "                                     " + email + "            ");
         JSystem.out.printColorln(JSystem.ColorBg.yellow, JSystem.Color.black, "                                                                                            ");
+        int salir = 0;
         do {
             callHeaderMain.headerPerfil();
             System.out.print("Menú de opciones");
-             JSystem.out.printColorln(JSystem.Color.cyan," \t\t\t\t                               (S) for Exit");
+            JSystem.out.printColorln(JSystem.Color.cyan, " \t\t\t\t                               (S) for Exit");
             System.out.println(" 1) Mi Cuenta\n 2) Proyectos\n 3) Documentos Compartidos\n 4) Cerrar Sesion");
             System.out.println();
             System.out.println("Selecciona una Opción");
             System.out.print(" ");
             String opt = teclado.nextLine();
-            try {
-                if ("S".equalsIgnoreCase(opt)) {
-                    callHeaderMain.EndSoftware();
-                }
-                switch (opt) {
-                    case "1":
-                        System.out.println("Ingreso nueva cuenta");
-                        callDisplayMetods.newAccount();
-                        break;
-                    case "2":
-                        System.out.println("Ingreso ver cuentas");
-                        callDisplayMetods.ViewAcount();
-                        break;
-                    case "3":
-                        
-                        break;
-                    case "4":
-                        System.out.println("Ingreso cerrar sesion");
-                        JSystem.out.printColorln(JSystem.ColorBg.red, JSystem.Color.white, "                                                                                              ");
-                        JSystem.out.printColorln(JSystem.ColorBg.red, JSystem.Color.white, "                           LA SESIÓN SE HA CERRADO SATISFACTORIAMENTE                         ");
-                        JSystem.out.printColorln(JSystem.ColorBg.red, JSystem.Color.white, "                                                                                              ");
-                        callDisplayMetods.Login();
-                        break;
-                    default:;
-                        JSystem.out.printColorln(JSystem.ColorBg.red, JSystem.Color.white, "______________________________NO HA ELEGIDO NINGUNA DE LAS OPCIONES_________________________");
-                        callDisplayMetods.Perfil(usuario, email);
-                        break;
-                }
-            } catch (Exception e) {
-                System.out.println("Ha sucedido un error en el sistema");
+            if ("S".equalsIgnoreCase(opt)) {
+                callHeaderMain.EndSoftware();
             }
-        } while (salir != 0);
+            switch (opt) {
+                case "1":
+                    System.out.println("Ingreso ver mi cuenta");
+                    callDisplayMetods.MyAccount(usuario, email, IdUser);
+                    break;
+                case "2":
+                    System.out.println("Ingreso mis proyectos");
+                    callDisplayMetods.MyProyect(usuario, email, IdUser);
+                    break;
+                case "3":
+                    System.out.println("Ingreso  documentos compartidos");
+                    break;
+                case "4":
+                    System.out.println("Ingreso cerrar sesion");
+                    JSystem.out.printColorln(JSystem.ColorBg.red, JSystem.Color.white, "                                                                                              ");
+                    JSystem.out.printColorln(JSystem.ColorBg.red, JSystem.Color.white, "                           LA SESIÓN SE HA CERRADO SATISFACTORIAMENTE                         ");
+                    JSystem.out.printColorln(JSystem.ColorBg.red, JSystem.Color.white, "                                                                                              ");
+                    callDisplayMetods.Login();
+                    break;
+                default:;
+                    JSystem.out.printColorln(JSystem.ColorBg.red, JSystem.Color.white, "______________________________NO HA ELEGIDO NINGUNA DE LAS OPCIONES_________________________");
+                    callDisplayMetods.Perfil(usuario, email, IdUser);
+                    break;
+            }
+        } while (salir != 2);
     }
 
-    public void newAccount() {
+    public void MyAccount(String usuario, String email, int IdUser) {
+        JSystem.out.printColorln(JSystem.Color.blue, "Ver los datos de mi cuenta");
+        JSystem.out.printColorln(JSystem.Color.blue, "MANTENIMIENTO");
         Display callDisplayMetods = new Display();
-        callHeaderMain.headerNewAcount();
-        JSystem.out.printColorln(JSystem.Color.blue, "Ingrese los datos de su nueva cuenta");
-        System.out.println("Proveedor de su cuenta");
-        System.out.print(" ");
-        Proveedor = teclado.nextLine();
-        System.out.println("Correo Electrónico");
-        System.out.print(" ");
-        email = teclado.nextLine();
-        //verificare si el correo es correcto.
-        callValidator.validar(email, "NC");
-        System.out.println("Clave de su cuenta");
-        System.out.print(" ");
-        password = teclado.nextLine();
-        //INGRESAR ESTOS DATOS A LA BASE DE DATOS.
-        //codigo provicionl.
-        JSystem.out.printColorln(JSystem.ColorBg.blue, JSystem.Color.yellow, "\t\t\t        INFORMACIÓN INTRODUCIDA CORRECTAMENTE       \t\t");
-        callDisplayMetods.Perfil(usuario, email);
-        //Fin codigo provicional
+        callHeaderMain.headerMyAcount();
+        int salir = 0;
+        do {
+            JSystem.out.printColorln(JSystem.Color.cyan, "____________________________________________________________________________________________");
+            System.out.print("Menú de opciones");
+            JSystem.out.printColorln(JSystem.Color.cyan, " \t\t\t\t                               (S) for Exit");
+            System.out.println(" 1) Información Personal\n 2) Cambiar Password\n 3) Eliminar Cuenta\n 4) Regresar");
+            JSystem.out.printColorln(JSystem.Color.cyan, "____________________________________________________________________________________________");
+            //AÑADIR AQUI LOS DATOS CONSULTADOS DE LA BASE DE DATOS.
+            System.out.println();
+            System.out.println("Selecciona una Opción");
+            System.out.print(" ");
+            String opt = teclado.nextLine();
+            if ("S".equalsIgnoreCase(opt)) {
+                callHeaderMain.EndSoftware();
+            }
+            switch (opt) {
+                case "1":
+                    System.out.println("Ingreso Información Personal");
+                    // callDisplayMetods.MyAccount();
+                    break;
+                case "2":
+                    System.out.println("Ingreso Cambiar Password");
+                    //callDisplayMetods.MyProyect();
+                    break;
+                case "3":
+                    System.out.println("Ingreso Eliminar Cuenta");
+                    break;
+                case "4":
+                    System.out.println("Ingreso Regresar");
+                    callDisplayMetods.Perfil(usuario, email, IdUser);
+                    break;
+                default:;
+                    JSystem.out.printColorln(JSystem.ColorBg.red, JSystem.Color.white, "______________________________NO HA ELEGIDO NINGUNA DE LAS OPCIONES_________________________");
+                    callDisplayMetods.Perfil(usuario, email, IdUser);
+                    break;
+            }
+        } while (salir != 2);
+
     }
 
     public void QuestionVerificationNewAcount() {
-        Display callDisplayMetods = new Display();
-        JSystem.out.printColorln(JSystem.Color.blue, "____________________________________________________________________________________________");
-        JSystem.out.printColorln(JSystem.ColorBg.red, JSystem.Color.white, "\n-------------------El email ingresado no cumple los requisitos como correo------------------");
-        JSystem.out.printColorln(JSystem.ColorBg.red, JSystem.Color.white, "\t\t   Deseas Continuar introduciendo su nueva cuenta --> 'S/N'\t\t    ");
-        JSystem.out.printColorln(JSystem.Color.blue, "____________________________________________________________________________________________");
-        System.out.print(" ");
-        String rsp = teclado.next();
-        if (rsp.equalsIgnoreCase("S")) {
-            teclado.nextLine();//limpiare la cache.
-            callDisplayMetods.newAccount();
-        } else if (rsp.equalsIgnoreCase("N")) {
-            teclado.nextLine();//limpiare la cache.
-            callDisplayMetods.Perfil(usuario, email);
-        } else {
-            JSystem.out.printColorln(JSystem.Color.blue, "____________________________________________________________________________________________");
-            JSystem.out.printColorln(JSystem.ColorBg.red, JSystem.Color.white, "\n------------------Ha ocurrido un error, dato introducido incorrectamente-------------------");
-            JSystem.out.printColorln(JSystem.Color.blue, "____________________________________________________________________________________________");
-            callDisplayMetods.Login();//llamo a login de usuarios.
-        }
+
     }
 
-    public void ViewAcount() {
+    public void MyProyect(String usuario, String email, int IdUser) {
         Display callDisplayMetods = new Display();
-        callHeaderMain.headerMyAcount();
-        int salir=0;
-        do{
-        JSystem.out.printColorln(JSystem.Color.cyan, "____________________________________________________________________________________________");
-        JSystem.out.printColorln(JSystem.ColorBg.yellow, JSystem.Color.black, "\tProveedor de cuenta\t\t" + "Correo Electronico\t\t" + "Clave de Acceso     ");
-        JSystem.out.printColorln(JSystem.Color.cyan, "____________________________________________________________________________________________");
-        //AÑADIR AQUI LOS DATOS CONSULTADOS DE LA BASE DE DATOS.
-        JSystem.out.printColor(JSystem.Color.blue, "CONTINUAR ");
-        JSystem.out.printColorln(JSystem.ColorBg.yellow, JSystem.Color.red, "C");
-        System.out.print(" ");
-        String opt = teclado.nextLine();
-        if ("C".equalsIgnoreCase(opt)) {
-            callDisplayMetods.Perfil(usuario, email);
-        } else{
-          System.out.println();
-          JSystem.out.printColorln(JSystem.ColorBg.red, JSystem.Color.white, "                                    INGRESO UNA OPCIÓN EQUIVOCADA                           ");
-          System.out.println();
-        }
-        }while(salir!=2);
+        Querys callQuerys = new Querys();//Instanciar Consultas
+        callHeaderMain.headerMyProyect();
         
+        int salir = 0;
+        do {
+            JSystem.out.printColorln(JSystem.Color.cyan, "____________________________________________________________________________________________");
+            System.out.print("Menú de opciones");
+            JSystem.out.printColorln(JSystem.Color.cyan, " \t\t\t\t                               (S) for Exit");
+            System.out.println(" 1) Ver Proyectos\n 2) Agregar Proyectos\n 3) Modificar Proyectos\n 4) Eliminar Proyectos\n 5) Regresar");
+            JSystem.out.printColorln(JSystem.Color.cyan, "____________________________________________________________________________________________");
+            //AÑADIR AQUI LOS DATOS CONSULTADOS DE LA BASE DE DATOS.
+            System.out.println();
+            System.out.println("Selecciona una Opción");
+            System.out.print(" ");
+            String opt = teclado.nextLine();
+            if ("S".equalsIgnoreCase(opt)) {
+                callHeaderMain.EndSoftware();
+            }
+            switch (opt) {
+                case "1":
+                    //Ver proyectos ingresados por usuario.
+                    JSystem.out.printColorln(JSystem.ColorBg.green, JSystem.Color.white,"--------------------------------------------------------------------------------------------");
+                    JSystem.out.printColorln(JSystem.ColorBg.green, JSystem.Color.white,"Nombre Proyecto|\tJefe|\t\tFecha Inicio|\tFecha Fin|\tDescripcion|\t    ");
+                    JSystem.out.printColorln(JSystem.ColorBg.green, JSystem.Color.white,"--------------------------------------------------------------------------------------------");
+                    System.out.println(callQuerys.getInfoProyect(IdUser));
+                    break;
+                case "2":
+                    System.out.println("Ingreso Agregar Proyectos");
+                    callDisplayMetods.AddProyect(usuario, email, IdUser);
+                    break;
+                case "3":
+                    System.out.println("Ingreso Modificar Proyectos");
+                    break;
+                case "4":
+                    System.out.println("Ingreso Eliminar Proyectos");
+                    break;
+                case "5":
+                    System.out.println("Ingreso Regresar");
+                    callDisplayMetods.Perfil(usuario, email, IdUser);
+                    break;
+                default:;
+                    JSystem.out.printColorln(JSystem.ColorBg.red, JSystem.Color.white, "______________________________NO HA ELEGIDO NINGUNA DE LAS OPCIONES_________________________");
+                    callDisplayMetods.MyAccount(usuario, email, IdUser);
+                    break;
+            }
+        } while (salir != 2);
+    }
+
+    public void AddProyect(String usuario, String email, int IdUser) {
+        Querys callQuerys = new Querys();//Instanciar Consultas
+        Display callDisplayMetods = new Display();
+        callHeaderMain.headerAddProyect();
+        System.out.print("Ingrese nombre del Proyecto:");
+        JSystem.out.printColorln(JSystem.Color.cyan, "\t\t\t\t\t\t              (C) for Cancel");
+        System.out.print(" ");
+        nameProyect = teclado.nextLine();
+        callDisplayMetods.cancelRegistroProyect(usuario, email, IdUser, nameProyect, null, null, null, null);
+        System.out.println();//space line.
+        System.out.println("Ingrese Jefe del Proyecto:");
+        System.out.print(" ");
+        jefeProyect = teclado.nextLine();
+        callDisplayMetods.cancelRegistroProyect(usuario, email, IdUser, null, jefeProyect, null, null, null);
+        System.out.println();//space line.
+        System.out.println("Ingrese la Fecha de Inicio:");
+        System.out.print(" ");
+        fInicio = teclado.nextLine();
+        System.out.println();//space line.
+        callDisplayMetods.cancelRegistroProyect(usuario, email, IdUser, null, null, fInicio, null, null);
+        System.out.println("Ingrese la Fecha de Fin:");
+        System.out.print(" ");
+        fFin = teclado.nextLine();
+        callDisplayMetods.cancelRegistroProyect(usuario, email, IdUser, null, null, null, fFin, null);
+        System.out.println();//space line.
+        System.out.println("Ingrese la descripción:");
+        System.out.print(" ");
+        descripcion = teclado.nextLine();
+        callDisplayMetods.cancelRegistroProyect(usuario, email, IdUser, null, null, null, null, descripcion);
+        System.out.println();//space line.
+        callQuerys.InsertProyect(usuario, email, IdUser, nameProyect, jefeProyect, fInicio, fFin, descripcion);
+    }
+    
+      public void cancelar(String name, String usuario, String email, String password, String pSeguridad, String rSeguridad) {
+        Display callDisplayMetods = new Display();
+        if ("C".equalsIgnoreCase(name) || "C".equalsIgnoreCase(usuario) || "C".equalsIgnoreCase(email) || "C".equalsIgnoreCase(password) || "C".equalsIgnoreCase(pSeguridad) || "C".equalsIgnoreCase(rSeguridad)) {
+            JSystem.out.printColorln(JSystem.Color.blue, "____________________________________________________________________________________________");
+            JSystem.out.printColorln(JSystem.ColorBg.red, JSystem.Color.white, "\n-----------------------------------SUSCRIPCIÓN CANCELADA------------------------------------");
+            JSystem.out.printColorln(JSystem.Color.blue, "____________________________________________________________________________________________");
+            callDisplayMetods.Login();
+        }
+    }
+      
+      public void cancelRegistroProyect(String usuario, String email, int IdUser, String nameProyect, String jefeProyect, String fInicio, String fFin, String descripcion) {
+        Display callDisplayMetods = new Display();
+        if ("C".equalsIgnoreCase(nameProyect) || "C".equalsIgnoreCase(jefeProyect) || "C".equalsIgnoreCase(fInicio) || "C".equalsIgnoreCase(fFin) || "C".equalsIgnoreCase(descripcion)) {
+            JSystem.out.printColorln(JSystem.Color.blue, "____________________________________________________________________________________________");
+            JSystem.out.printColorln(JSystem.ColorBg.red, JSystem.Color.white, "\n-----------------------------------SUSCRIPCIÓN CANCELADA------------------------------------");
+            JSystem.out.printColorln(JSystem.Color.blue, "____________________________________________________________________________________________");
+            callDisplayMetods.MyProyect(usuario, email, IdUser);
+        }
     }
 }

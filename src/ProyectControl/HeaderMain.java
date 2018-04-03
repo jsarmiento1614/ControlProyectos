@@ -84,7 +84,23 @@ public class HeaderMain {
        JSystem.out.printColorln(JSystem.Color.cyan, "____________________________________________________________________________________________");
        JSystem.out.printColorln(JSystem.Color.cyan, "____________________________________________________________________________________________");
        JSystem.out.printColorln(JSystem.Color.cyan,"");
-       System.out.println("\t\t\t\t      CUENTAS PERSONALES");    
+       System.out.println("\t\t\t\t     CONFIGURACIÓN CUENTA");    
+       System.out.println("\t\t\t\t\t**************");  
+   }
+   
+    public void headerMyProyect(){
+       JSystem.out.printColorln(JSystem.Color.cyan, "____________________________________________________________________________________________");
+       JSystem.out.printColorln(JSystem.Color.cyan, "____________________________________________________________________________________________");
+       JSystem.out.printColorln(JSystem.Color.cyan,"");
+       System.out.println("\t\t\t\t        MENU PROYECTOS");    
+       System.out.println("\t\t\t\t\t**************");  
+   }
+    
+        public void headerAddProyect(){
+       JSystem.out.printColorln(JSystem.Color.cyan, "____________________________________________________________________________________________");
+       JSystem.out.printColorln(JSystem.Color.cyan, "____________________________________________________________________________________________");
+       JSystem.out.printColorln(JSystem.Color.cyan,"");
+       System.out.println("\t\t\t\t      AGREGAR PROYECTOS");    
        System.out.println("\t\t\t\t\t**************");  
    }
    

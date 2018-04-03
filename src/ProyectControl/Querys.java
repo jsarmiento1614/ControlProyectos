@@ -5,6 +5,7 @@
  */
 package ProyectControl;
 
+import console.JSystem;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -37,12 +38,20 @@ public class Querys {
         return conn;
     }
 
-    private void disconnectDB(Connection conn) {
-        try {
-            conn.close();
-        } catch (SQLException ex) {
-            Logger.getLogger(Querys.class.getName()).log(Level.SEVERE, null, ex);
-        }
+    private void disconnectDB() {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (stmt != null) {
+                    stmt.close();
+                }
+                if (conn != null) {
+                    conn.close();
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(Querys.class.getName()).log(Level.SEVERE, null, ex);
+            }
     }
 
     public void queryEmail(String email, String password) {
@@ -54,29 +63,22 @@ public class Querys {
             while (rs.next()) {
                 if (rs.getString("email").equals(email) && rs.getString("password").equals(password)) {
                     String usuario = rs.getString("nombreUsuario");
-                    //ir al perfil del usuario
-                    callDisplayMetods.Perfil(usuario, email);
+                    int IdUser = rs.getInt("IdUsers");
+                    //cierro la base de datos.
+                    disconnectDB();
+                    //Ingreso al perfil del usuario.
+                    callDisplayMetods.Perfil(usuario, email, IdUser);
                     break;
                 } else {
 
                 }
+
             }
         } catch (SQLException e) {
             System.out.println("Ha sucedido un error al insertar la informacion... " + e);
         } finally {
-            try {
-                if (rs != null) {
-                    rs.close();
-                }
-                if (stmt != null) {
-                    stmt.close();
-                }
-                if (conn != null) {
-                    conn.close();
-                }
-            } catch (SQLException e) {
-                System.out.println("Ha sucedido un error en cerrar la conexiones de la db... " + e);
-            }
+            //cierro la base de datos.
+            disconnectDB();
         }
         //Llamar correo encontrado.
         callDisplayMetods.QuestionRecoverPassword();
@@ -93,7 +95,7 @@ public class Querys {
             while (rs.next()) {
                 IdUser = rs.getInt("IdUsers");
             }
-            String query = " insert into usuarios(IdUsers, nombreCompleto, nombreUsuario, email, password) values (?,?,?,?,?) ";
+            String query = " insert into usuarios(IdUsers, nombreCompleto, nombreUsuario, email, password, preguntaSeguridad, respuestaSeguridad) values (?,?,?,?,?,?,?) ";
             PreparedStatement preStmt = conn.prepareStatement(query);
             IdUser++;
             preStmt.setInt(1, IdUser);
@@ -101,29 +103,24 @@ public class Querys {
             preStmt.setString(3, usuario);
             preStmt.setString(4, email);
             preStmt.setString(5, password);
+            preStmt.setString(6, pSeguridad);
+            preStmt.setString(7, rSeguridad);
             preStmt.execute();
+            System.out.println();
+             //cierro la base de datos.
+            disconnectDB();
 
         } catch (SQLException e) {
             //Llamar error de registro encontrado.
-            callDisplayMetods.QuestionRecoverPassword();
+            System.out.println("Ha sucedido un error");
+            callDisplayMetods.Login();
         } finally {
-            try {
-                if (rs != null) {
-                    rs.close();
-                }
-                if (stmt != null) {
-                    stmt.close();
-                }
-                if (conn != null) {
-                    conn.close();
-                }
-            } catch (SQLException e) {
-                System.out.println("Ha sucedido un error en cerrar la conexiones de la db... " + e);
-            }
+             //cierro la base de datos.
+            disconnectDB();
         }
     }   //Ingresa Proyectos a Base de Datos.
 
-    public void InsertProyect(int IdUsers, String nombreProyecto, String jefe, String fechaInicio, String fechaFin, String descripcion) {
+    public void InsertProyect(String usuario, String email, int IdUser, String nombreProyecto, String jefe, String fechaInicio, String fechaFin, String descripcion) {
         conn = connectDB();
 
         try {
@@ -137,78 +134,64 @@ public class Querys {
             PreparedStatement preStmt = conn.prepareStatement(query);
             IdProyect++;
             preStmt.setInt(1, IdProyect);
-            preStmt.setInt(2, IdUsers);
+            preStmt.setInt(2, IdUser);
             preStmt.setString(3, nombreProyecto);
             preStmt.setString(4, jefe);
             preStmt.setString(5, fechaInicio);
             preStmt.setString(6, fechaFin);
             preStmt.setString(7, descripcion);
             preStmt.execute();
-
+             //cierro la base de datos.
+            disconnectDB();
+            JSystem.out.printColorln(JSystem.Color.cyan, "____________________________________________________________________________________________");
+            JSystem.out.printColorln(JSystem.Color.blue, "\n                    LA INFORMACIÓN SE HA INTRODUCIDO SATISFACTORIAMENTE                   ");
+            JSystem.out.printColorln(JSystem.Color.cyan, "____________________________________________________________________________________________");
+            callDisplayMetods.Perfil(usuario, email, IdUser);
         } catch (SQLException e) {
             //Llamar error de registro encontrado.
-            callDisplayMetods.QuestionRecoverPassword();
+            System.out.println("Ha sucedido un error" + e);
+            callDisplayMetods.MyProyect(usuario, email, IdUser);
         } finally {
-            try {
-                if (rs != null) {
-                    rs.close();
-                }
-                if (stmt != null) {
-                    stmt.close();
-                }
-                if (conn != null) {
-                    conn.close();
-                }
-            } catch (SQLException e) {
-                System.out.println("Ha sucedido un error en cerrar la conexiones de la db... " + e);
-            }
+             //cierro la base de datos.
+            disconnectDB();
 
         }
     }
     //Consulta Proyectos a Base de Datos
 
-    public String getInfoProyect() {
-        conn = connectDB();
-        String query = " select * from proyectos";
-        PreparedStatement consulta = null;
-        ResultSet resultadotabla = null;
+    public String getInfoProyect(int IdUser) {
+        conn = connectDB();      
+        PreparedStatement preStmt = null;
         String w = "";
         StringBuilder tabla = new StringBuilder(w);
-        PreparedStatement preStmt = null;
         try {
-            consulta = conn.prepareStatement(query);
-            resultadotabla = consulta.executeQuery();
-            tabla.append("Proyecto Id|\tUser Id|\tNombre Proyecto|\tJefe|\tFecha Inicio|\tFecha Fin|\tDescripcion|\n");
-            while (resultadotabla.next()) {
-                tabla.append(resultadotabla.getInt(1)).append("\t");
-                tabla.append(resultadotabla.getInt(2)).append("\t");
-                tabla.append(resultadotabla.getString(3)).append("\t");
-                tabla.append(resultadotabla.getString(4)).append("\t");
-                tabla.append(resultadotabla.getString(5)).append("\t");
-                tabla.append(resultadotabla.getString(6)).append("\t");
-                tabla.append(resultadotabla.getString(7)).append("\t \n");
+            String query = "select * from proyectos where IdUsers=?";
+            preStmt= conn.prepareStatement(query);
+            preStmt.setInt(1, IdUser);
+            rs = preStmt.executeQuery();
+           
+            //Creo una tabla de consulta de la informacion.
+            while (rs.next()) {
+                tabla.append(rs.getString(3)).append("\t\t");
+                tabla.append(rs.getString(4)).append("\t\t");
+                tabla.append(rs.getString(5)).append("\t");
+                tabla.append(rs.getString(6)).append("\t");
+                tabla.append(rs.getString(7)).append("\t \n");
             }
+            tabla.append("--------------------------------------------------------------------------------------------\n");
+             //cierro la base de datos.
+            disconnectDB();
             return tabla.toString();
+            
         } catch (SQLException ex) {
             Logger.getLogger(Querys.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
-            try {
-                if (preStmt != null) {
-                    preStmt.close();
-                }
-                if (conn != null) {
-                    disconnectDB(conn);
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+             //cierro la base de datos.
+            disconnectDB();
         }
         return tabla.toString();
     }
 
-    String getInfoProyect(String proyectos) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
 
 //Modifica Proyectos a Base de Datos.
     public void ModifyProyect(int IdUsers, String nombreProyecto, String jefe, String fechaInicio, String fechaFin, String descripcion) {
@@ -231,24 +214,14 @@ public class Querys {
             preStmt.setString(5, fechaFin);
             preStmt.setString(6, descripcion);
             preStmt.execute();
-
+             //cierro la base de datos.
+            disconnectDB();
         } catch (SQLException e) {
             //Llamar error de registro encontrado.
             callDisplayMetods.QuestionRecoverPassword();
         } finally {
-            try {
-                if (rs != null) {
-                    rs.close();
-                }
-                if (stmt != null) {
-                    stmt.close();
-                }
-                if (conn != null) {
-                    conn.close();
-                }
-            } catch (SQLException e) {
-                System.out.println("Ha sucedido un error en cerrar la conexiones de la db... " + e);
-            }
+             //cierro la base de datos.
+            disconnectDB();
 
         }
     }   //Borra Proyectos a Base de Datos.
@@ -274,19 +247,8 @@ public class Querys {
             //Llamar error de registro encontrado.
             callDisplayMetods.QuestionRecoverPassword();
         } finally {
-            try {
-                if (rs != null) {
-                    rs.close();
-                }
-                if (stmt != null) {
-                    stmt.close();
-                }
-                if (conn != null) {
-                    conn.close();
-                }
-            } catch (SQLException e) {
-                System.out.println("Ha sucedido un error en cerrar la conexiones de la db... " + e);
-            }
+             //cierro la base de datos.
+            disconnectDB();
 
         }
     }
