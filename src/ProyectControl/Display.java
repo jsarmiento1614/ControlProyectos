@@ -147,8 +147,6 @@ public class Display {
         callDisplayMetods.Login();
     }
 
-  
-
     public void QuestionVerificationEmail() {
         Display callDisplayMetods = new Display();
         JSystem.out.printColorln(JSystem.Color.blue, "____________________________________________________________________________________________");
@@ -286,8 +284,8 @@ public class Display {
         JSystem.out.printColorln(JSystem.ColorBg.yellow, JSystem.Color.white, "\n\n\n");
         JSystem.out.printColorln(JSystem.ColorBg.yellow, JSystem.Color.white, "                                                                                            ");
         JSystem.out.printColorln(JSystem.ColorBg.yellow, JSystem.Color.black, "                          BIENVENIDO A SU CUENTA CONTROL DE PROYECTOS                       ");
-        JSystem.out.printColorln(JSystem.ColorBg.yellow, JSystem.Color.black, "                 " + nombreUsuario + "                                     " + email + "            ");
         JSystem.out.printColorln(JSystem.ColorBg.yellow, JSystem.Color.black, "                                                                                            ");
+        JSystem.out.printColorln(JSystem.Color.blue, "                 " + nombreUsuario + "                                     " + email + "            ");
         int salir = 0;
         do {
             callHeaderMain.headerPerfil();
@@ -303,7 +301,6 @@ public class Display {
             }
             switch (opt) {
                 case "1":
-                    System.out.println("Ingreso ver mi cuenta");
                     callDisplayMetods.MyAccount(usuario, email, IdUser);
                     break;
                 case "2":
@@ -329,8 +326,7 @@ public class Display {
     }
 
     public void MyAccount(String usuario, String email, int IdUser) {
-        JSystem.out.printColorln(JSystem.Color.blue, "Ver los datos de mi cuenta");
-        JSystem.out.printColorln(JSystem.Color.blue, "MANTENIMIENTO");
+        Querys callQuerys = new Querys();//Instanciar Consultas
         Display callDisplayMetods = new Display();
         callHeaderMain.headerMyAcount();
         int salir = 0;
@@ -350,15 +346,16 @@ public class Display {
             }
             switch (opt) {
                 case "1":
-                    System.out.println("Ingreso Información Personal");
-                    // callDisplayMetods.MyAccount();
+                    JSystem.out.printColorln(JSystem.ColorBg.blue, JSystem.Color.white,"IdUser\t|\tNombre\t|\tUsuario\t|\tEmail\t|\t\tPassword\n");
+                    System.out.println(callQuerys.getInfoPerson(IdUser));
                     break;
                 case "2":
-                    System.out.println("Ingreso Cambiar Password");
-                    //callDisplayMetods.MyProyect();
+                    callDisplayMetods.changePass(email);
                     break;
                 case "3":
-                    System.out.println("Ingreso Eliminar Cuenta");
+                    JSystem.out.printColorln(JSystem.ColorBg.red, JSystem.Color.white, "_____________________Su cuenta ha sido Eliminada con exito... vuelva Pronto___________________");
+                    callQuerys.DelUser(IdUser);
+                    
                     break;
                 case "4":
                     System.out.println("Ingreso Regresar");
@@ -373,6 +370,24 @@ public class Display {
 
     }
 
+    
+    public void changePass(String email){
+        callHeaderMain.headerChangePass();
+        Display callDisplayMetods = new Display();
+        Querys callQuerys = new Querys();//Instanciar Consultas
+        System.out.println("Ingrese contraseña anterior");
+        password=teclado.nextLine();
+        if(callQuerys.validarPassword(password, email)){
+          System.out.println("Ingrese su nueva contraseña");
+          password=teclado.nextLine();
+          callQuerys.insertNewPass(password, email);
+        }else{
+            JSystem.out.printColorln(JSystem.Color.blue, "____________________________________________________________________________________________");
+            JSystem.out.printColorln(JSystem.ColorBg.red, JSystem.Color.white, "\n-----------------------------------CONTRASEÑA NO EXISTE-------------------------------------");
+            JSystem.out.printColorln(JSystem.Color.blue, "____________________________________________________________________________________________");
+            callDisplayMetods.changePass(email);
+        }
+    }
     public void QuestionVerificationNewAcount() {
 
     }
@@ -381,7 +396,7 @@ public class Display {
         Display callDisplayMetods = new Display();
         Querys callQuerys = new Querys();//Instanciar Consultas
         callHeaderMain.headerMyProyect();
-        
+
         int salir = 0;
         do {
             JSystem.out.printColorln(JSystem.Color.cyan, "____________________________________________________________________________________________");
@@ -400,17 +415,18 @@ public class Display {
             switch (opt) {
                 case "1":
                     //Ver proyectos ingresados por usuario.
-                    JSystem.out.printColorln(JSystem.ColorBg.green, JSystem.Color.white,"--------------------------------------------------------------------------------------------");
-                    JSystem.out.printColorln(JSystem.ColorBg.green, JSystem.Color.white,"Nombre Proyecto|\tJefe|\t\tFecha Inicio|\tFecha Fin|\tDescripcion|\t    ");
-                    JSystem.out.printColorln(JSystem.ColorBg.green, JSystem.Color.white,"--------------------------------------------------------------------------------------------");
+                    JSystem.out.printColorln(JSystem.ColorBg.green, JSystem.Color.white, "--------------------------------------------------------------------------------------------");
+                    JSystem.out.printColorln(JSystem.ColorBg.green, JSystem.Color.white, "Nombre Proyecto|\tJefe|\t\tFecha Inicio|\tFecha Fin|\tDescripcion|\t    ");
+                    JSystem.out.printColorln(JSystem.ColorBg.green, JSystem.Color.white, "--------------------------------------------------------------------------------------------");
                     System.out.println(callQuerys.getInfoProyect(IdUser));
                     break;
                 case "2":
-                    System.out.println("Ingreso Agregar Proyectos");
                     callDisplayMetods.AddProyect(usuario, email, IdUser);
                     break;
                 case "3":
-                    System.out.println("Ingreso Modificar Proyectos");
+                    //Esta funcion llama la info de los proyectos.
+                    System.out.println(callQuerys.getInfoProyect(IdUser));
+                    callDisplayMetods.deleteProyec(IdUser);
                     break;
                 case "4":
                     System.out.println("Ingreso Eliminar Proyectos");
@@ -427,7 +443,16 @@ public class Display {
         } while (salir != 2);
     }
 
+    public void deleteProyec(int IdUser){
+        Querys callQuerys = new Querys();//Instanciar Consultas
+        System.out.println("ingrese el nombre del proyecto que desea eliminar");
+        name=teclado.nextLine();
+        callQuerys.DeleteProyect(IdUser);
+        
+        
+    }
     public void AddProyect(String usuario, String email, int IdUser) {
+        
         Querys callQuerys = new Querys();//Instanciar Consultas
         Display callDisplayMetods = new Display();
         callHeaderMain.headerAddProyect();
@@ -459,8 +484,8 @@ public class Display {
         System.out.println();//space line.
         callQuerys.InsertProyect(usuario, email, IdUser, nameProyect, jefeProyect, fInicio, fFin, descripcion);
     }
-    
-      public void cancelar(String name, String usuario, String email, String password, String pSeguridad, String rSeguridad) {
+
+    public void cancelar(String name, String usuario, String email, String password, String pSeguridad, String rSeguridad) {
         Display callDisplayMetods = new Display();
         if ("C".equalsIgnoreCase(name) || "C".equalsIgnoreCase(usuario) || "C".equalsIgnoreCase(email) || "C".equalsIgnoreCase(password) || "C".equalsIgnoreCase(pSeguridad) || "C".equalsIgnoreCase(rSeguridad)) {
             JSystem.out.printColorln(JSystem.Color.blue, "____________________________________________________________________________________________");
@@ -469,8 +494,8 @@ public class Display {
             callDisplayMetods.Login();
         }
     }
-      
-      public void cancelRegistroProyect(String usuario, String email, int IdUser, String nameProyect, String jefeProyect, String fInicio, String fFin, String descripcion) {
+
+    public void cancelRegistroProyect(String usuario, String email, int IdUser, String nameProyect, String jefeProyect, String fInicio, String fFin, String descripcion) {
         Display callDisplayMetods = new Display();
         if ("C".equalsIgnoreCase(nameProyect) || "C".equalsIgnoreCase(jefeProyect) || "C".equalsIgnoreCase(fInicio) || "C".equalsIgnoreCase(fFin) || "C".equalsIgnoreCase(descripcion)) {
             JSystem.out.printColorln(JSystem.Color.blue, "____________________________________________________________________________________________");

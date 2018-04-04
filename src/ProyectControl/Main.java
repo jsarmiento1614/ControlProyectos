@@ -4,13 +4,11 @@
  * and open the template in the editor.
  */
 package ProyectControl;
-
 /**
  *
  * @author jsarmiento
  */
 public class Main {
-
     /**
      * @param args the command line arguments
      */
