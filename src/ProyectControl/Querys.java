@@ -65,7 +65,7 @@ public class Querys {
                     String usuario = rs.getString("nombreUsuario");
                     int IdUser = rs.getInt("IdUsers");
                     //cierro la base de datos.
-                    disconnectDB();
+                    //disconnectDB();
                     //Ingreso al perfil del usuario.
                     callDisplayMetods.Perfil(usuario, email, IdUser);
                     break;
@@ -134,7 +134,26 @@ public class Querys {
             disconnectDB();
         }
     }
-
+ 
+    public boolean DelUser(int IdUser){
+        conn = connectDB();
+        String query = " DELETE from usuarios where IdUsers = ?;";
+        PreparedStatement consulta = null;
+        ResultSet resultadotabla = null;
+        
+        try{
+            consulta = conn.prepareStatement(query);
+            consulta.setInt(1, IdUser);
+            consulta.executeUpdate();
+            System.out.println("eliminada");
+            return true;
+        } catch (SQLException ex) {
+            System.out.println("La cuenta no se pudo eliminar");
+            return true;
+        } finally {
+            disconnectDB();
+        }
+    }
     public void InsertRegistro(String name, String usuario, String email, String password, String pSeguridad, String rSeguridad) {
         conn = connectDB();
         //Consultar info de la base de datos.
@@ -397,27 +416,5 @@ public class Querys {
         return tabla.toString();
     }
 
-       public void DelUser(int IdUser) {
-        conn = connectDB();
-
-        try {
-            stmt = conn.createStatement();
-            rs = stmt.executeQuery("DELETE from usuarios where IdUser = ?");
-
-            String query = " delete from proyectos where IdProyect = '' ";
-            PreparedStatement preStmt = conn.prepareStatement(query);
-
-            preStmt.setInt(1, IdUser);
-            preStmt.execute();
-
-        } catch (SQLException e) {
-            //Llamar error de registro encontrado.
-            callDisplayMetods.Login();
-        } finally {
-            //cierro la base de datos.
-            disconnectDB();
-
-        }
-
-    }
+    
 }

@@ -353,9 +353,9 @@ public class Display {
                     callDisplayMetods.changePass(email);
                     break;
                 case "3":
-                    JSystem.out.printColorln(JSystem.ColorBg.red, JSystem.Color.white, "_____________________Su cuenta ha sido Eliminada con exito... vuelva Pronto___________________");
-                    callQuerys.DelUser(IdUser);
-                    
+                    if (callQuerys.DelUser(IdUser))
+                        JSystem.out.printColorln(JSystem.ColorBg.red, JSystem.Color.white, "_____________________Su cuenta ha sido Eliminada con exito... vuelva Pronto___________________");
+                        callDisplayMetods.Login();
                     break;
                 case "4":
                     System.out.println("Ingreso Regresar");
