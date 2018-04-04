@@ -263,17 +263,17 @@ public class Querys {
     }
 
 //Modifica Proyectos a Base de Datos.
-    public void ModifyProyect(int IdUsers, String nombreProyecto, String jefe, String fechaInicio, String fechaFin, String descripcion) {
+    public void ModifyProyect(int IdUsers,String nombreProyecto, String jefe, String fechaInicio, String fechaFin, String descripcion) {
         conn = connectDB();
 
         try {
             stmt = conn.createStatement();
-            rs = stmt.executeQuery("select * from proyectos");
-            int IdProyect = 0;
-            while (rs.next()) {
-                IdProyect = rs.getInt("IdProyect");
+            rs = stmt.executeQuery("select from proyectos where nombreProyecto = ? ");
+                while (rs.next()) {
+                nombreProyecto = rs.getString("nombreProyecto");
+                
             }
-            String query = "  update proyectos(IdProyect, IdUsers, nombreProyecto, jefe, fechaInicio, fechaFin, descripcion) values (?,?,?,?,?,?,?) where IdProyect= '' ";
+            String query = "  update proyectos set (Idusers,nombreProyecto, jefe, fechaInicio, fechaFin, descripcion) values (?,?,?,?,?,?,?) where nombreProyecto = ? ";
             PreparedStatement preStmt = conn.prepareStatement(query);
 
             preStmt.setInt(1, IdUsers);
@@ -296,21 +296,21 @@ public class Querys {
     }
     //Borra Proyectos a Base de Datos.
 
-    public void DeleteProyect(int IdUser) {
+    public void DeleteProyect(String nombreProyecto) {
         conn = connectDB();
 
         try {
             stmt = conn.createStatement();
-            rs = stmt.executeQuery("select * from proyectos where IdUser = ?;");
+            rs = stmt.executeQuery("select * from proyectos where nombreProyecto = ?");
 
-            int IdProyect = 0;
+            
             while (rs.next()) {
-                IdProyect = rs.getInt("IdProyect");
+                nombreProyecto = rs.getString("nombreProyecto");
             }
-            String query = " delete from proyectos where IdProyect = '' ";
+            String query = " delete from proyectos where nombreProyecto = ? ";
             PreparedStatement preStmt = conn.prepareStatement(query);
 
-            preStmt.setInt(1, IdProyect);
+            preStmt.setString(1, nombreProyecto);
 
             preStmt.execute();
 
