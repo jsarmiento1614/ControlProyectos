@@ -104,6 +104,14 @@ public class HeaderMain {
         System.out.println("\t\t\t\t      AGREGAR PROYECTOS");
         System.out.println("\t\t\t\t\t**************");
     }
+    
+    public void headerAddTareas() {
+        JSystem.out.printColorln(JSystem.Color.cyan, "____________________________________________________________________________________________");
+        JSystem.out.printColorln(JSystem.Color.cyan, "____________________________________________________________________________________________");
+        JSystem.out.printColorln(JSystem.Color.cyan, "");
+        System.out.println("\t\t\t\t      AGREGAR TAREAS");
+        System.out.println("\t\t\t\t\t**************");
+    }
 
     public void headerChangePass() {
         JSystem.out.printColorln(JSystem.Color.cyan, "____________________________________________________________________________________________");

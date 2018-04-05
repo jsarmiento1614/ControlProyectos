@@ -23,12 +23,20 @@ public class Display {
     private String nPassword;
     private String pSeguridad;
     private String rSeguridad;
-    //more variables
+    //mas variables proyect
     private String nameProyect;
     private String jefeProyect;
     private String fInicio;
     private String fFin;
     private String descripcion;
+    //mas variables tareas
+    private String nameTarea;
+    private String actividadTarea;
+    private String encargadoTarea;
+    private String estado;
+    String[] arrayEncargado;
+    int contador = 0;
+    int cantSend = 0;
 
     /**
      * **** Instancio de manera general las clases usadas.*****
@@ -243,7 +251,7 @@ public class Display {
         System.out.print(" ");
         rSeguridad = teclado.nextLine();
         /*REALIZAR LA CONSULATA A LA BD SI EXISTE LA RESPUESTA
-            SI EXISTE CONTINUAR*/
+         SI EXISTE CONTINUAR*/
         System.out.println("Ingrese su nueva contraseña");
         System.out.print(" ");
         nPassword = teclado.nextLine();
@@ -346,16 +354,22 @@ public class Display {
             }
             switch (opt) {
                 case "1":
-                    JSystem.out.printColorln(JSystem.ColorBg.blue, JSystem.Color.white,"IdUser\t|\tNombre\t|\tUsuario\t|\tEmail\t|\t\tPassword\n");
+                    JSystem.out.printColorln(JSystem.ColorBg.blue, JSystem.Color.white, "IdUser\t|\tNombre\t|\tUsuario\t|\tEmail\t|\t\tPassword\n");
                     System.out.println(callQuerys.getInfoPerson(IdUser));
                     break;
                 case "2":
                     callDisplayMetods.changePass(email);
                     break;
                 case "3":
-                    if (callQuerys.DelUser(IdUser))
-                        JSystem.out.printColorln(JSystem.ColorBg.red, JSystem.Color.white, "_____________________Su cuenta ha sido Eliminada con exito... vuelva Pronto___________________");
-                        callDisplayMetods.Login();
+                    JSystem.out.printColorln(JSystem.ColorBg.red, JSystem.Color.white, "_____________________Esta Seguro que desea eliminar su cuenta___________________");
+                    JSystem.out.printColorln(JSystem.ColorBg.red, JSystem.Color.white, "_____________Se Eliminará toda la inforación de esta cuenta... (S/N)____________");
+                    opt = teclado.nextLine();
+                    if ("S".equalsIgnoreCase(opt)) {
+                        if (callQuerys.DelUser(IdUser)) {
+                            JSystem.out.printColorln(JSystem.ColorBg.red, JSystem.Color.white, "_____________________Su cuenta ha sido Eliminada con exito... vuelva Pronto___________________");
+                        }
+                    }
+                    callDisplayMetods.Login();
                     break;
                 case "4":
                     System.out.println("Ingreso Regresar");
@@ -370,24 +384,24 @@ public class Display {
 
     }
 
-    
-    public void changePass(String email){
+    public void changePass(String email) {
         callHeaderMain.headerChangePass();
         Display callDisplayMetods = new Display();
         Querys callQuerys = new Querys();//Instanciar Consultas
         System.out.println("Ingrese contraseña anterior");
-        password=teclado.nextLine();
-        if(callQuerys.validarPassword(password, email)){
-          System.out.println("Ingrese su nueva contraseña");
-          password=teclado.nextLine();
-          callQuerys.insertNewPass(password, email);
-        }else{
+        password = teclado.nextLine();
+        if (callQuerys.validarPassword(password, email)) {
+            System.out.println("Ingrese su nueva contraseña");
+            password = teclado.nextLine();
+            callQuerys.insertNewPass(password, email);
+        } else {
             JSystem.out.printColorln(JSystem.Color.blue, "____________________________________________________________________________________________");
             JSystem.out.printColorln(JSystem.ColorBg.red, JSystem.Color.white, "\n-----------------------------------CONTRASEÑA NO EXISTE-------------------------------------");
             JSystem.out.printColorln(JSystem.Color.blue, "____________________________________________________________________________________________");
             callDisplayMetods.changePass(email);
         }
     }
+
     public void QuestionVerificationNewAcount() {
 
     }
@@ -402,7 +416,7 @@ public class Display {
             JSystem.out.printColorln(JSystem.Color.cyan, "____________________________________________________________________________________________");
             System.out.print("Menú de opciones");
             JSystem.out.printColorln(JSystem.Color.cyan, " \t\t\t\t                               (S) for Exit");
-            System.out.println(" 1) Ver Proyectos\n 2) Agregar Proyectos\n 3) Modificar Proyectos\n 4) Eliminar Proyectos\n 5) Regresar");
+            System.out.println(" 1) Ver Proyectos\n 2) Agregar Proyectos\n 3) Modificar Proyectos\n 4) Compartir Proyectos\n 5) Eliminar Proyectos 6) Regresar");
             JSystem.out.printColorln(JSystem.Color.cyan, "____________________________________________________________________________________________");
             //AÑADIR AQUI LOS DATOS CONSULTADOS DE LA BASE DE DATOS.
             System.out.println();
@@ -416,9 +430,10 @@ public class Display {
                 case "1":
                     //Ver proyectos ingresados por usuario.
                     JSystem.out.printColorln(JSystem.ColorBg.green, JSystem.Color.white, "--------------------------------------------------------------------------------------------");
-                    JSystem.out.printColorln(JSystem.ColorBg.green, JSystem.Color.white, "Nombre Proyecto|\tJefe|\t\tFecha Inicio|\tFecha Fin|\tDescripcion|\t    ");
+                    JSystem.out.printColorln(JSystem.ColorBg.green, JSystem.Color.white, "ID|\tNombre Proyecto|\tJefe|\t\tFecha Inicio|\tFecha Fin|\tDescripcion|\t    ");
                     JSystem.out.printColorln(JSystem.ColorBg.green, JSystem.Color.white, "--------------------------------------------------------------------------------------------");
                     System.out.println(callQuerys.getInfoProyect(IdUser));
+                    callDisplayMetods.addTareas(usuario, email, IdUser);
                     break;
                 case "2":
                     callDisplayMetods.AddProyect(usuario, email, IdUser);
@@ -426,12 +441,46 @@ public class Display {
                 case "3":
                     //Esta funcion llama la info de los proyectos.
                     System.out.println(callQuerys.getInfoProyect(IdUser));
-                    callDisplayMetods.deleteProyec(IdUser);
+                    callDisplayMetods.deleteProyec(usuario, email, IdUser);
                     break;
                 case "4":
-                    System.out.println("Ingreso Eliminar Proyectos");
+                    //Compartir proyectos.
+                    int IdProyect = 0;
+                    System.out.println(callQuerys.getInfoProyect(IdUser));
+                    int IdPro = callQuerys.retornarIDProyect(IdUser);
+                    System.out.println("Ingresa el ID del proyecto que quieres compartir");
+                    System.out.print(" ");
+                    IdProyect = teclado.nextInt();
+                    if (IdProyect == IdPro) {
+                        System.out.println("A cuantos usuarios deseas compartir:");
+                        System.out.print(" ");
+                        cantSend = teclado.nextInt();
+                        arrayEncargado = new String[cantSend];
+                        teclado.nextLine();
+                        //int IdTarea = callQuerys.retornarIdTarea(nameTarea);
+                        for (int i = 0; i < arrayEncargado.length; i++) {
+                            contador++;
+                            System.out.println("Ingresa el email #" + contador);
+                            System.out.print(" ");
+                            encargadoTarea = teclado.nextLine();
+                            arrayEncargado[i] = encargadoTarea;
+                        }
+                        System.out.println("Ingrese el Asunto");
+                        System.out.print(" ");
+                        String asunto=teclado.nextLine();
+                        System.out.println("Describe el mensaje ha enviar");
+                        System.out.print(" ");
+                        descripcion=teclado.nextLine();
+                        System.out.println("-------------------------------Espera, Conectando con el Servidor---------------------------");
+                        SendMail callSendMail = new SendMail();
+                        callSendMail.enviar(email, arrayEncargado, asunto, descripcion);   
+                    }
+
                     break;
                 case "5":
+                    System.out.println("Ingreso Eliminar Proyectos");
+                    break;
+                case "6":
                     System.out.println("Ingreso Regresar");
                     callDisplayMetods.Perfil(usuario, email, IdUser);
                     break;
@@ -443,16 +492,15 @@ public class Display {
         } while (salir != 2);
     }
 
-    public void deleteProyec(int IdUser){
+    public void deleteProyec(String usuario, String email, int IdUser) {
         Querys callQuerys = new Querys();//Instanciar Consultas
         System.out.println("ingrese el nombre del proyecto que desea eliminar");
-        name=teclado.nextLine();
-        callQuerys.DeleteProyect(IdUser);
-        
-        
+        name = teclado.nextLine();
+        //callQuerys.DeleteProyect(IdUser);
+
     }
+
     public void AddProyect(String usuario, String email, int IdUser) {
-        
         Querys callQuerys = new Querys();//Instanciar Consultas
         Display callDisplayMetods = new Display();
         callHeaderMain.headerAddProyect();
@@ -502,6 +550,69 @@ public class Display {
             JSystem.out.printColorln(JSystem.ColorBg.red, JSystem.Color.white, "\n-----------------------------------SUSCRIPCIÓN CANCELADA------------------------------------");
             JSystem.out.printColorln(JSystem.Color.blue, "____________________________________________________________________________________________");
             callDisplayMetods.MyProyect(usuario, email, IdUser);
+        }
+    }
+
+    public void addTareas(String usuario, String email, int IdUser) {
+        Display callDisplayMetods = new Display();
+        Querys callQuerys = new Querys();//Instanciar Consultas
+        //Obtener IdTarea
+        //Obtener IdProyect
+
+        JSystem.out.printColorln(JSystem.Color.blue, "____________________________________________________________________________________________");
+        JSystem.out.printColorln(JSystem.ColorBg.green, JSystem.Color.white, "\n-------------------------DESEA AGREGAR TAREAS A SUS PROYECTOS (S/N)-------------------------");
+        JSystem.out.printColorln(JSystem.Color.blue, "____________________________________________________________________________________________");
+        System.out.print(" ");
+        String opt = teclado.nextLine();
+        if ("S".equalsIgnoreCase(opt)) {
+            callHeaderMain.headerAddTareas();
+            System.out.println("Ingrese el codigo de proyecto al que quiere agregar tareas:");
+            System.out.print(" ");
+            int codigoProyecto = teclado.nextInt();
+            //Verificar que existe ese nombre.
+            if (callQuerys.retornarNameProyect(codigoProyecto) == true) {
+                teclado.nextLine();
+                System.out.println("Ingrese nombre de la tarea:");
+                System.out.print(" ");
+                nameTarea = teclado.nextLine();
+                System.out.println("Ingrese Actividad a realizar:");
+                System.out.print(" ");
+                actividadTarea = teclado.nextLine();
+                System.out.println("Cual es la fecha de Inicio de la tarea:");
+                System.out.print(" ");
+                fInicio = teclado.nextLine();
+                System.out.println("Cual es la fecha de fin de la tarea:");
+                System.out.print(" ");
+                fFin = teclado.nextLine();
+                System.out.println("Cual es el estado de la tarea:");
+                System.out.print(" ");
+                estado = teclado.nextLine();
+                int IdProyect = callQuerys.retornarIDProyect(IdUser);
+                callQuerys.InsertTask(usuario, email, IdUser, IdProyect, nameTarea, actividadTarea, fInicio, fFin, estado);
+                System.out.println("Cuantos encargados trabajaran en la tarea:");
+                System.out.print(" ");
+                cantSend = teclado.nextInt();
+                arrayEncargado = new String[cantSend];
+                teclado.nextLine();
+                int IdTarea = callQuerys.retornarIdTarea(nameTarea);
+                for (int i = 0; i < arrayEncargado.length; i++) {
+                    contador++;
+                    System.out.println("Ingresa el encargado #" + contador);
+                    System.out.print(" ");
+                    encargadoTarea = teclado.nextLine();
+                    arrayEncargado[i] = encargadoTarea;
+                    callQuerys.InsertEncargados(usuario, email, IdUser, IdTarea, arrayEncargado[i].toString());
+                }
+                JSystem.out.printColorln(JSystem.Color.blue, "____________________________________________________________________________________________");
+                JSystem.out.printColorln(JSystem.ColorBg.green, JSystem.Color.white, "\n-------------------------LA TAREA SE HA AGREGADO SATISFACTORIAMENTE-------------------------");
+                JSystem.out.printColorln(JSystem.Color.blue, "____________________________________________________________________________________________");
+
+            } else {
+                System.out.println("El Codigo de proyecto ingresado, no existe.");
+                callDisplayMetods.addTareas(usuario, email, IdUser);
+            }
+        } else {
+            callDisplayMetods.Perfil(usuario, email, IdUser);
         }
     }
 }
