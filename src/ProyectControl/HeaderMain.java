@@ -112,6 +112,14 @@ public class HeaderMain {
         System.out.println("\t\t\t\t      AGREGAR TAREAS");
         System.out.println("\t\t\t\t\t**************");
     }
+    
+    public void headerViewTareas() {
+        JSystem.out.printColorln(JSystem.Color.cyan, "____________________________________________________________________________________________");
+        JSystem.out.printColorln(JSystem.Color.cyan, "____________________________________________________________________________________________");
+        JSystem.out.printColorln(JSystem.Color.cyan, "");
+        System.out.println("\t\t\t\t      VER TAREAS");
+        System.out.println("\t\t\t\t\t**************");
+    }
 
     public void headerChangePass() {
         JSystem.out.printColorln(JSystem.Color.cyan, "____________________________________________________________________________________________");

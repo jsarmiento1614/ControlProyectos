@@ -288,7 +288,7 @@ public class Display {
 
     public void Perfil(String nombreUsuario, String email, int IdUser) {
         Display callDisplayMetods = new Display();
-
+        Querys callQuerys = new Querys();//Instanciar Consultas
         JSystem.out.printColorln(JSystem.ColorBg.yellow, JSystem.Color.white, "\n\n\n");
         JSystem.out.printColorln(JSystem.ColorBg.yellow, JSystem.Color.white, "                                                                                            ");
         JSystem.out.printColorln(JSystem.ColorBg.yellow, JSystem.Color.black, "                          BIENVENIDO A SU CUENTA CONTROL DE PROYECTOS                       ");
@@ -316,7 +316,8 @@ public class Display {
                     callDisplayMetods.MyProyect(usuario, email, IdUser);
                     break;
                 case "3":
-                    System.out.println("Ingreso  documentos compartidos");
+                    
+                    System.out.println(callQuerys.getDocumentShare(usuario, IdUser, email));
                     break;
                 case "4":
                     System.out.println("Ingreso cerrar sesion");
@@ -416,7 +417,7 @@ public class Display {
             JSystem.out.printColorln(JSystem.Color.cyan, "____________________________________________________________________________________________");
             System.out.print("Menú de opciones");
             JSystem.out.printColorln(JSystem.Color.cyan, " \t\t\t\t                               (S) for Exit");
-            System.out.println(" 1) Ver Proyectos\n 2) Agregar Proyectos\n 3) Modificar Proyectos\n 4) Compartir Proyectos\n 5) Eliminar Proyectos 6) Regresar");
+            System.out.println(" 1) Ver Proyectos\n 2) Agregar Proyectos\n 3) Modificar Proyectos\n 4) Compartir Proyectos\n 5) Eliminar Proyectos \n 6) Regresar");
             JSystem.out.printColorln(JSystem.Color.cyan, "____________________________________________________________________________________________");
             //AÑADIR AQUI LOS DATOS CONSULTADOS DE LA BASE DE DATOS.
             System.out.println();
@@ -436,22 +437,27 @@ public class Display {
                     callDisplayMetods.addTareas(usuario, email, IdUser);
                     break;
                 case "2":
+                    //llamo agregar proyectos
                     callDisplayMetods.AddProyect(usuario, email, IdUser);
                     break;
                 case "3":
                     //Esta funcion llama la info de los proyectos.
                     System.out.println(callQuerys.getInfoProyect(IdUser));
-                    callDisplayMetods.deleteProyec(usuario, email, IdUser);
+                    //callDisplayMetods.deleteProyec(usuario, email, IdUser);
                     break;
                 case "4":
                     //Compartir proyectos.
+                    //debo enviar un codigo de edicion de proyectos.
                     int IdProyect = 0;
+                    
                     System.out.println(callQuerys.getInfoProyect(IdUser));
                     int IdPro = callQuerys.retornarIDProyect(IdUser);
                     System.out.println("Ingresa el ID del proyecto que quieres compartir");
                     System.out.print(" ");
                     IdProyect = teclado.nextInt();
                     if (IdProyect == IdPro) {
+                        //Obtener Nombre Proyecto.
+                        nameProyect= callQuerys.retornarNombreP(IdProyect);
                         System.out.println("A cuantos usuarios deseas compartir:");
                         System.out.print(" ");
                         cantSend = teclado.nextInt();
@@ -471,11 +477,12 @@ public class Display {
                         System.out.println("Describe el mensaje ha enviar");
                         System.out.print(" ");
                         descripcion=teclado.nextLine();
-                        System.out.println("-------------------------------Espera, Conectando con el Servidor---------------------------");
+                        descripcion=descripcion.concat("\n\n\nLOS DATOS DE ACCESO AL PROYECTO COMPARTIDO SON LOS SIGUIETES\n\nNombre Proyecto: ").concat(nameProyect).concat("\nID Proyecto: ").concat(Integer.toString(IdProyect).concat("\n\n\n Recomendamos no extraviar u olvidar esta información.\n\n\nAtt.\n Sistema de Control de Proyectos... ☻Jsarmiento AND TotalPC"));
+                        JSystem.out.printColorln(JSystem.ColorBg.blue, JSystem.Color.white,"-------------------------------Espera, Conectando con el Servidor---------------------------");
                         SendMail callSendMail = new SendMail();
-                        callSendMail.enviar(email, arrayEncargado, asunto, descripcion);   
+                        callSendMail.enviar(email, arrayEncargado, asunto, descripcion);
+                        callQuerys.insertDocumentShare(usuario, IdUser, email, nameProyect, IdProyect);
                     }
-
                     break;
                 case "5":
                     System.out.println("Ingreso Eliminar Proyectos");
@@ -491,13 +498,11 @@ public class Display {
             }
         } while (salir != 2);
     }
-
     public void deleteProyec(String usuario, String email, int IdUser) {
         Querys callQuerys = new Querys();//Instanciar Consultas
         System.out.println("ingrese el nombre del proyecto que desea eliminar");
         name = teclado.nextLine();
         //callQuerys.DeleteProyect(IdUser);
-
     }
 
     public void AddProyect(String usuario, String email, int IdUser) {
@@ -559,12 +564,12 @@ public class Display {
         //Obtener IdTarea
         //Obtener IdProyect
 
-        JSystem.out.printColorln(JSystem.Color.blue, "____________________________________________________________________________________________");
-        JSystem.out.printColorln(JSystem.ColorBg.green, JSystem.Color.white, "\n-------------------------DESEA AGREGAR TAREAS A SUS PROYECTOS (S/N)-------------------------");
-        JSystem.out.printColorln(JSystem.Color.blue, "____________________________________________________________________________________________");
+        JSystem.out.printColorln(JSystem.Color.blue, "_______________________________________");
+        JSystem.out.printColorln(JSystem.ColorBg.green, JSystem.Color.white, "\nAGREGAR TAREAS(A)         |           VER TAREAS(V)");
+        JSystem.out.printColorln(JSystem.Color.blue, "______________________________________");
         System.out.print(" ");
         String opt = teclado.nextLine();
-        if ("S".equalsIgnoreCase(opt)) {
+        if ("A".equalsIgnoreCase(opt)) {
             callHeaderMain.headerAddTareas();
             System.out.println("Ingrese el codigo de proyecto al que quiere agregar tareas:");
             System.out.print(" ");
@@ -611,8 +616,23 @@ public class Display {
                 System.out.println("El Codigo de proyecto ingresado, no existe.");
                 callDisplayMetods.addTareas(usuario, email, IdUser);
             }
-        } else {
+        } else if("V".equalsIgnoreCase(opt)) {
+            //Mostrar las tareas
+            callHeaderMain.headerViewTareas();
+            System.out.println("Ingrese el codigo de proyecto al que quiere ver sus tareas:");
+            System.out.print(" ");
+            int cTarea = teclado.nextInt();
+            int IdProyect= callQuerys.retornarIDProyect(IdUser);
+            JSystem.out.printColorln(JSystem.ColorBg.green, JSystem.Color.white, "\n                                                                                            ");                
+            if(IdProyect==cTarea){
+                System.out.println(callQuerys.getInfoTask(IdProyect));
+            }else{
+                System.out.println("El codigo ingresado no existe");
+                callDisplayMetods.MyProyect(usuario, email, IdUser);
+            }    
+        }else{
             callDisplayMetods.Perfil(usuario, email, IdUser);
+
         }
     }
 }

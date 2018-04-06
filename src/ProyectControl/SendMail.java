@@ -5,6 +5,7 @@
  */
 package ProyectControl;
 
+import console.JSystem;
 import java.util.Properties;
 import javax.mail.Message;
 import javax.mail.MessagingException;
@@ -45,9 +46,9 @@ public class SendMail {
                             message.setText(descripcion);
                             Transport.send(message);
                         }
-                        System.out.println("____________________________________________________________________________________________");
-			System.out.println("\n---------------------EL PROYECTO HA SIDO COMPARTIDO CON TUS CONTACTOS---------------------");
-                        System.out.println("____________________________________________________________________________________________");                        
+                        JSystem.out.printColorln(JSystem.Color.cyan,"____________________________________________________________________________________________");
+			JSystem.out.printColorln(JSystem.ColorBg.green, JSystem.Color.white,"\n---------------------EL PROYECTO HA SIDO COMPARTIDO CON TUS CONTACTOS---------------------");
+                        JSystem.out.printColorln(JSystem.Color.cyan,"____________________________________________________________________________________________");                        
                         //Regreso a la clase perfil.
                         System.out.println();
                         //Perfil callPerfil=new Perfil();

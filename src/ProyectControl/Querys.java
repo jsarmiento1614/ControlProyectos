@@ -125,7 +125,7 @@ public class Querys {
                 JSystem.out.printColorln(JSystem.ColorBg.green, JSystem.Color.white, "\n------------------------CONTRASEÑA MODIFICADA SATISFACTORIAMENTE----------------------");
                 JSystem.out.printColorln(JSystem.Color.blue, "____________________________________________________________________________________________");
             }
-           // disconnectDB();
+            // disconnectDB();
         } catch (SQLException e) {
             Logger.getLogger(Querys.class.getName()).log(Level.SEVERE, null, e);
         } finally {
@@ -149,7 +149,7 @@ public class Querys {
             consulta.setInt(1, IdUser);
             consulta.executeUpdate();
             return true;
-            
+
         } catch (SQLException ex) {
             System.out.println("La cuenta no se pudo eliminar");
             return true;
@@ -157,7 +157,8 @@ public class Querys {
             disconnectDB();
         }
     }
-   /* public boolean DelTareaAndEncargados(int IdTarea) {
+
+    /* public boolean DelTareaAndEncargados(int IdTarea) {
         conn = connectDB();
         String query = " DELETE * from tareas where IdProyect = ?;";
         String query2 = " DELETE from encargados where IdTarea = ?;";
@@ -310,8 +311,8 @@ public class Querys {
             preStmt.setString(3, encargado);
             preStmt.execute();
             //cierro la base de datos.
-           //disconnectDB();
-           //callDisplayMetods.MyProyect(usuario, email, IdUser);
+            //disconnectDB();
+            //callDisplayMetods.MyProyect(usuario, email, IdUser);
         } catch (SQLException e) {
             //Llamar error de registro encontrado.
             System.out.println("Ha sucedido un error" + e);
@@ -348,7 +349,7 @@ public class Querys {
             //cierro la base de datos.
             disconnectDB();
             return tabla.toString();
-            
+
         } catch (SQLException ex) {
             Logger.getLogger(Querys.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
@@ -421,9 +422,9 @@ public class Querys {
     }
     //Consulta Tareas a Base de Datos
 
-    public String getInfoTask() {
+    public String getInfoTaskE(int IdProyect) {
         conn = connectDB();
-        String query = " select * from tareas";
+        String query = " select * from tareas where IdProyect=?;";
         PreparedStatement consulta = null;
         String w = "";
         StringBuilder tabla = new StringBuilder(w);
@@ -442,7 +443,7 @@ public class Querys {
                 tabla.append(rs.getString(7)).append("\t");
                 tabla.append(rs.getString(8)).append("\t \n");
             }
-           disconnectDB();
+            disconnectDB();
             return tabla.toString();
         } catch (SQLException ex) {
             Logger.getLogger(Querys.class.getName()).log(Level.SEVERE, null, ex);
@@ -451,31 +452,93 @@ public class Querys {
         }
         return tabla.toString();
     }
+    
+    public String getInfoTask(int IdProyect) {
+        conn = connectDB();
+        PreparedStatement preStmt = null;
+        String w = "";
+        StringBuilder tabla = new StringBuilder(w);
+        try {
+            String query = " select * from tareas where IdProyect=?;";
+            preStmt = conn.prepareStatement(query);
+            preStmt.setInt(1, IdProyect);
+            rs = preStmt.executeQuery();
 
-    String getInfoTask(String tareas) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            //Creo una tabla de consulta de la informacion.
+             tabla.append("IdTarea|\tProyectId|\tNombreTarea|\tActividad Tarea|\tEncargado|\tFecha Inicio|\tFecha Fin|\tEstado|\n");
+             while (rs.next()) {
+                tabla.append(rs.getInt(1)).append("\t");
+                tabla.append(rs.getInt(2)).append("\t");
+                tabla.append(rs.getString(3)).append("\t");
+                tabla.append(rs.getString(4)).append("\t");
+                tabla.append(rs.getString(5)).append("\t");
+                tabla.append(rs.getString(6)).append("\t");
+                tabla.append(rs.getString(7)).append("\t");
+                tabla.append(rs.getString(8)).append("\t \n");
+            }
+            tabla.append("--------------------------------------------------------------------------------------------\n");
+            //cierro la base de datos.
+        } catch (SQLException ex) {
+            Logger.getLogger(Querys.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            //cierro la base de datos.
+            disconnectDB();
+        }
+        return tabla.toString();
     }
 
-    //Consulta Documentos Compartidos a Base de Datos
-    public String getDocumentShare() {
+
+    
+     public void insertDocumentShare(String usuario, int IdUser, String email, String nProyecto, int IdProyect) {
         conn = connectDB();
-        String query = " select * from docCompartidos";
+        try {
+            stmt = conn.createStatement();
+            rs = stmt.executeQuery("select * from docCompartidos");
+            int idDocument = 0;
+            while (rs.next()) {
+                idDocument = rs.getInt("idDocument");
+            }
+            String query = " insert into docCompartidos(idDocument, IdUsers, correo, proyecto, IdProyect) values (?,?,?,?,?);";
+            PreparedStatement preStmt = conn.prepareStatement(query);
+            idDocument++;
+            preStmt.setInt(1, idDocument);
+            preStmt.setInt(2, IdUser);
+            preStmt.setString(3, email);
+            preStmt.setString(4, nProyecto);
+            preStmt.setInt(5, IdProyect);
+            preStmt.execute();
+        } catch (SQLException e) {
+            //Llamar error de registro encontrado.
+            System.out.println("Ha sucedido un error" + e);
+            callDisplayMetods.MyProyect(usuario, email, IdUser);
+        } finally {
+            //cierro la base de datos.
+            disconnectDB();
+
+        }
+    }
+    //Consulta Documentos Compartidos a Base de Datos   
+    public String getDocumentShare(String usuario, int IdUser, String email) {
+        conn = connectDB();
+        String query = " select * from docCompartidos where IdUsers=?;";
         PreparedStatement consulta = null;
         String w = "";
         StringBuilder tabla = new StringBuilder(w);
         PreparedStatement preStmt = null;
         try {
             consulta = conn.prepareStatement(query);
+            consulta.setInt(1, IdUser);
             rs = consulta.executeQuery();
+            tabla.append("IdDocument\t|\tIdUser\t|\tCorreo Electronico|\t\tProyecto|\tIdProyect\n");
             while (rs.next()) {
-                tabla.append(rs.getInt(1)).append("\t");
-                tabla.append(rs.getInt(2)).append("\t");
-                tabla.append(rs.getString(3)).append("\t");
-                tabla.append(rs.getString(4)).append("\t \n");
+                tabla.append(rs.getInt(1)).append("\t\t\t");
+                tabla.append(rs.getInt(2)).append("\t\t");
+                tabla.append(rs.getString(3)).append("\t\t\t");
+                tabla.append(rs.getString(4)).append("\t");
+                tabla.append(rs.getInt(5)).append("\n");
             }
-           //  disconnectDB();
+            //disconnectDB();
             return tabla.toString();
-          
         } catch (SQLException ex) {
             Logger.getLogger(Querys.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
@@ -511,7 +574,7 @@ public class Querys {
         }
         return tabla.toString();
     }
-    
+
     public int retornarIDProyect(int IdUser) {
         conn = connectDB();
         String query = "Select IdProyect from proyectos where IdUsers = ?;";
@@ -532,7 +595,7 @@ public class Querys {
 
         return id;
     }
-    
+
     public boolean retornarNameProyect(int codigoProyecto) {
         conn = connectDB();
         String query = "Select * from proyectos where IdProyect = ?;";
@@ -541,8 +604,8 @@ public class Querys {
             consulta = conn.prepareStatement(query);
             consulta.setInt(1, codigoProyecto);
             rs = consulta.executeQuery();
-            int tmp=rs.getInt(1);
-            if (codigoProyecto==(tmp)) {
+            int tmp = rs.getInt(1);
+            if (codigoProyecto == (tmp)) {
                 return true;
             }
             disconnectDB();
@@ -554,17 +617,36 @@ public class Querys {
 
         return false;
     }
-    
+
+    public String retornarNombreP(int codigoProyecto) {
+        conn = connectDB();
+        String query = "Select * from proyectos where IdProyect = ?;";
+        PreparedStatement consulta = null;
+        String tmp = "";
+        try {
+            consulta = conn.prepareStatement(query);
+            consulta.setInt(1, codigoProyecto);
+            rs = consulta.executeQuery();
+            tmp = rs.getString(3);
+            disconnectDB();
+        } catch (SQLException e) {
+            Logger.getLogger(Querys.class.getName()).log(Level.SEVERE, null, e);
+        } finally {
+            disconnectDB();
+        }
+        return tmp;
+    }
+
     public int retornarIdTarea(String nameTarea) {
         conn = connectDB();
         String query = "Select * from tareas where nombreTarea = ?;";
         PreparedStatement consulta = null;
-        int tmp=0;
+        int tmp = 0;
         try {
             consulta = conn.prepareStatement(query);
             consulta.setString(1, nameTarea);
             rs = consulta.executeQuery();
-            tmp=rs.getInt(1);            
+            tmp = rs.getInt(1);
             //disconnectDB();
         } catch (SQLException e) {
             Logger.getLogger(Querys.class.getName()).log(Level.SEVERE, null, e);
@@ -572,7 +654,7 @@ public class Querys {
             disconnectDB();
         }
 
-       return tmp;
+        return tmp;
     }
 
 }
